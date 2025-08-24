@@ -62,7 +62,8 @@ INSTALLED_APPS = [
     'entorno_social',
     'habitos_alimentarios',
     'horas_de_sueno',
-    'conforme_con_cuerpo'
+    'conforme_con_cuerpo',
+    'planes_recomendaciones',
 ]
 
 MIDDLEWARE = [

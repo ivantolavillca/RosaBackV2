@@ -39,6 +39,7 @@ from comida_diaria.api.router import router_comida_diaria
 from consumo_comida_rapida.api.router import router_consumo_comida_rapida
 from django.views.generic.base import RedirectView
 from personas.api.views import ExportDataView, PredecirObesidadApkView, PredecirObesidadView,EntrenarYPredecirView,EntrenarYPredecirApkView,TestApicheck
+from planes_recomendaciones.api.router import router_recomendaciones
 from tiempo_en_pantallas.api.router import router_tiempo_en_pantallas
 from tipo_de_transporte.api.router import router_tipo_de_transporte
 
@@ -85,6 +86,7 @@ urlpatterns = [
     path('api/', include(router_tiempo_en_pantallas.urls)),
     path('api/', include(router_habitos_alimentarios.urls)),
     path('api/', include(router_entorno_social.urls)),
+    path('api/', include(router_recomendaciones.urls)),
     path('api/', include('estadisticas.api.router')),
     path('api/report/persona/', ExportDataView.as_view(), name='export-data'),
     path('api/predecir-obesidad/', PredecirObesidadView.as_view(), name='predecir_obesidad'),

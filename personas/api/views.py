@@ -22,6 +22,9 @@ from personas.models import Personas
 from sklearn.preprocessing import LabelEncoder
 from rest_framework.test import APITestCase
 
+from planes_recomendaciones.api.serializers import RecomendacionesSerializer
+from planes_recomendaciones.models import RecomendacionesModel
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 model_path = os.path.join(settings.BASE_DIR, 'personas', 'obesidad_model.keras')
 scaler_path = os.path.join(settings.BASE_DIR, 'personas', 'scaler.pkl')
@@ -80,13 +83,29 @@ class PredecirObesidadView(APIView):
             prediccion_clase = np.argmax(prediccion, axis=1)
             resultado = int(prediccion_clase[0])
             clasificacion = label_encoder.inverse_transform([resultado])[0]
+            recomendaciones = PredecirObesidadApkView.detalleRecomendacion(clasificacion)
+            recomendaciones_ser = RecomendacionesSerializer(recomendaciones, many=True).data
+            terapeutico = [rec for rec in recomendaciones_ser if rec['tipo'] == 'Terapéutico']
+            preventivo = [rec for rec in recomendaciones_ser if rec['tipo'] == 'Preventivo']
+
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response({'prediccion': clasificacion}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                'prediccion': clasificacion,
+                'recomendaciones': {
+                    'terapeutico': terapeutico,
+                    'preventivo': preventivo
+                }
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class PredecirObesidadApkView(APIView):
     #permission_classes = [IsAdminOrReadOnly]
+    def detalleRecomendacion(clasificacion):
+        return RecomendacionesModel.objects.filter(clasificacion=clasificacion, is_delete=False)
     def post(self, request):
         serializer = ModeloDatos(data=request.data)
         if not serializer.is_valid():
@@ -134,9 +153,23 @@ class PredecirObesidadApkView(APIView):
             prediccion_clase = np.argmax(prediccion, axis=1)
             resultado = int(prediccion_clase[0])
             clasificacion = label_encoder.inverse_transform([resultado])[0]
+            recomendaciones = PredecirObesidadApkView.detalleRecomendacion(clasificacion)
+            recomendaciones_ser = RecomendacionesSerializer(recomendaciones, many=True).data
+            terapeutico = [rec for rec in recomendaciones_ser if rec['tipo'] == 'Terapéutico']
+            preventivo = [rec for rec in recomendaciones_ser if rec['tipo'] == 'Preventivo']
+
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response({'prediccion': clasificacion}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                'prediccion': clasificacion,
+                'recomendaciones': {
+                    'terapeutico': terapeutico,
+                    'preventivo': preventivo
+                }
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class EntrenarYPredecirApkView(APIView):
