@@ -90,7 +90,7 @@ class PredecirObesidadView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(
+        response = Response(
             {
                 'prediccion': clasificacion,
                 'recomendaciones': {
@@ -100,6 +100,8 @@ class PredecirObesidadView(APIView):
             },
             status=status.HTTP_200_OK
         )
+        response['Content-Type'] = 'application/json; charset=utf-8'
+        return response
 
 
 class PredecirObesidadApkView(APIView):
@@ -160,7 +162,7 @@ class PredecirObesidadApkView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(
+        response = Response(
             {
                 'prediccion': clasificacion,
                 'recomendaciones': {
@@ -170,6 +172,8 @@ class PredecirObesidadApkView(APIView):
             },
             status=status.HTTP_200_OK
         )
+        response['Content-Type'] = 'application/json; charset=utf-8'
+        return response
 
 
 class EntrenarYPredecirApkView(APIView):
