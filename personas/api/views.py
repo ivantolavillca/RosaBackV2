@@ -436,7 +436,10 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
     max_limit = 100
 class PersonaApiViewSet(ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
-    queryset = Personas.objects.filter(is_delete=False).order_by('-id')
+    queryset = Personas.objects.filter(is_delete=False).select_related(
+    'genero', 'comida_diaria', 'horas_de_sueno', 'tipo_de_transporte',
+    'tiempo_en_pantallas', 'habitos_alimentarios', 'clasificacion'
+    ).order_by('-id')
     serializer_class = PersonaSerializer
     filter_backends = [SearchFilter]
     search_fields = ['nombre_completo', 'edad', 'peso', 'estatura']
